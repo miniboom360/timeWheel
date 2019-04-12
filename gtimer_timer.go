@@ -1,7 +1,7 @@
 package timeTick
 
 import (
-	"tests/timeTick/gtype"
+	"tests/timeWheel/gtype"
 	"time"
 )
 
@@ -41,10 +41,29 @@ func New(slot int, interval time.Duration, level...int)*Timer{
 	for i := 0; i <length; i++{
 		if i > 0 {
 			n := time.Duration(t.wheels[i - 1].totalMs) * time.Millisecond
-			w := t
+			w := t.newWheel(i, slot, n)
+			t.wheels[i] = w
+			//t.wheels[i-1].
 
 		}
 	}
 
+	return t
 }
 
+func (t *Timer) newWheel(level int, slot int, interval time.Duration) *wheel{
+	w := &wheel{
+		timer:t,
+		level:level,
+		slots:make([]*gtype.List, slot),
+		number : int64(slot),
+		ticks:gtype.NewInt64(),
+		totalMs : int64(slot)*interval.Nanoseconds()/1e6,
+		createMs:time.Now().UnixNano()/1e6,
+		intervalMs:interval.Nanoseconds()/1e6,
+	}
+	for i := int64(0); i < w.number; i++{
+		w.slots[i] = gtype.New()
+	}
+	return w
+}
