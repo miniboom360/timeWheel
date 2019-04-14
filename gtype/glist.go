@@ -18,6 +18,24 @@ func New(unsafe ...bool) *List {
 	}
 }
 
+// 从链表头端出栈数据项(删除)
+func (l *List) PopFront() (value interface{}) {
+	l.mu.Lock()
+	if e := l.list.Front(); e != nil {
+		value = l.list.Remove(e)
+	}
+	l.mu.Unlock()
+	return
+}
+
+// 获取链表长度
+func (l *List) Len() (length int) {
+	l.mu.RLock()
+	length = l.list.Len()
+	l.mu.RUnlock()
+	return
+}
+
 // 链表头入栈数据
 func (l *List) PushFront(v interface{}) (e *Element) {
 	l.mu.Lock()

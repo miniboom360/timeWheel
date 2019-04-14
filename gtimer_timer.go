@@ -67,3 +67,63 @@ func (t *Timer) newWheel(level int, slot int, interval time.Duration) *wheel {
 	}
 	return w
 }
+
+// 添加定时任务
+func (t *Timer) doAddEntry (interval time.Duration, job JobFunc, singleton bool, time int, status int) *Entry {
+	return t.wheels[t.getLevelByIntervalMs(interval.Nanoseconds()/1e6)].addEntry(interval, job, singleton, times, status)
+}
+
+// 添加定时任务，给定父级Entry,间隔参数为毫秒
+func (t *Timer) doAddEntryByParent(interval int64, parent *Entry) *Entry{
+	return t.wheels[t.getLevelByIntervalMs(interval)].addEntryByParent(interval, parent)
+}
+
+// 根据intervalMs计算添加的分层索引
+func (t *Timer) getLevelByIntervalMs(intervalMs int64) int {
+	pos, cmp := t.binSearchIndex(intervalMs)
+	switch cmp {
+	case 0:
+	// intervalMs比最后匹配值小
+	case -1:
+		i := pos
+		for; i >0; i--{
+			if intervalMs > t.wheels[i].intervalMs && intervalMs <= t.wheels[i].totalMs{
+				return i
+			}
+		}
+		return i
+		// intervalMs比最后匹配值大
+	case 1:
+		i := pos
+		for ; i < t.length - 1; i++{
+			if intervalMs > t.wheels[i].intervalMs && intervalMs <= t.wheels[i].totalMs{
+				return i
+			}
+		}
+		return i
+	}
+	return 0
+}
+
+// 二分查找当前任务可以添加的时间轮对象索引
+func (t *Timer) binSearchIndex(n int64)(index, result int){
+	min := 0
+	max := t.length - 1
+	mid := 0
+	cmp := -2
+	for min <= max{
+		mid = int((min+max)/2)
+		switch{
+		case t.wheels[mid].intervalMs == n : cmp = 0
+		case t.wheels[mid].intervalMs > n : cmp = -1
+		case t.wheels[mid].intervalMs < n : cmp = 1
+		}
+		switch cmp {
+		case -1 : max = mid -1
+		case 1 : min=mid+1
+		case 0 :
+			return mid, cmp
+		}
+	}
+	return mid, cmp
+}
