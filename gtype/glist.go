@@ -4,16 +4,16 @@ import "container/list"
 
 type (
 	List struct {
-		mu *RWMutex
+		mu   *RWMutex
 		list *list.List
 	}
 
 	Element = list.Element
 )
 
-func New(unsafe...bool) *List{
+func New(unsafe ...bool) *List {
 	return &List{
-		mu : NewRWMutex(unsafe...),
+		mu:   NewRWMutex(unsafe...),
 		list: list.New(),
 	}
 }
@@ -26,19 +26,27 @@ func (l *List) PushFront(v interface{}) (e *Element) {
 	return
 }
 
+// 往链表尾入栈数据项
+func (l *List) PushBack(v interface{}) (e *Element) {
+	l.mu.Lock()
+	e = l.list.PushBack(v)
+	l.mu.Unlock()
+	return
+}
+
 // 批量从链表尾端出栈数据项(删除)
-func (l *List) BatchPopBack(max int) (values []interface{}){
+func (l *List) BatchPopBack(max int) (values []interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
 	length := l.list.Len()
 	if length > 0 {
-		if max > 0 && max < length{
+		if max > 0 && max < length {
 			length = max
 		}
 		tmp := (*Element)(nil)
 		values = make([]interface{}, length)
-		for i := 0; i < length; i++{
+		for i := 0; i < length; i++ {
 			tmp = l.list.Back()
 			values[i] = l.list.Remove(tmp)
 		}
@@ -46,6 +54,6 @@ func (l *List) BatchPopBack(max int) (values []interface{}){
 	return
 }
 
-func (l *List) PopBackAll() []interface{}{
+func (l *List) PopBackAll() []interface{} {
 	return l.BatchPopBack(-1)
 }

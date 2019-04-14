@@ -6,9 +6,9 @@ type Int64 struct {
 	val int64
 }
 
-func NewInt64(value...int64) *Int64 {
+func NewInt64(value ...int64) *Int64 {
 	if len(value) > 0 {
-		return &Int64{val:value[0]}
+		return &Int64{val: value[0]}
 	}
 	return &Int64{}
 }
