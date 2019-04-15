@@ -23,6 +23,7 @@ var (
 	defaultTimer = New(gDEFAULT_SLOT_NUMBER, gDEFAULT_WHEEL_INTERVAL*time.Millisecond, gDEFAULT_WHEEL_LEVEL)
 )
 
+//增加
 func Add(interval time.Duration, job JobFunc) *Entry {
 	return defaultTimer.Add(interval, job)
 }
