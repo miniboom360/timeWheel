@@ -1,6 +1,9 @@
 package timeTick
 
-import "math"
+import (
+	"math"
+	"time"
+)
 
 const (
 	STATUS_READY            = 0
@@ -13,3 +16,13 @@ const (
 	gDEFAULT_WHEEL_INTERVAL = 50
 	gDEFAULT_WHEEL_LEVEL    = 6
 )
+
+var (
+	// 默认的wheel管理对象
+	// slots = 10; wheel_interval = 50ms; level = 6
+	defaultTimer = New(gDEFAULT_SLOT_NUMBER, gDEFAULT_WHEEL_INTERVAL*time.Millisecond, gDEFAULT_WHEEL_LEVEL)
+)
+
+func Add(interval time.Duration, job JobFunc) *Entry {
+	return defaultTimer.Add(interval, job)
+}

@@ -11,7 +11,7 @@ type (
 	Element = list.Element
 )
 
-func New(unsafe ...bool) *List {
+func NewList(unsafe ...bool) *List {
 	return &List{
 		mu:   NewRWMutex(unsafe...),
 		list: list.New(),
