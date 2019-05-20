@@ -9,8 +9,8 @@ import (
 
 func TestExampleAdd(t *testing.T) {
 	now := time.Now()
-	interval := 1400 * time.Millisecond
-	gtimer.Add(interval, func() {
+	interval := 3 * time.Second
+	gtimer.AddTimes(interval, 3, func() {
 		fmt.Println(time.Now(), time.Duration(time.Now().UnixNano()-now.UnixNano()))
 		now = time.Now()
 	})
