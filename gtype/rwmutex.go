@@ -27,7 +27,6 @@ func (mu *RWMutex) Lock(force ...bool) {
 	}
 }
 
-// force多个值是干什么的?
 func (mu *RWMutex) Unlock(force ...bool) {
 	if mu.safe || (len(force) > 0 && force[0]) {
 		mu.RWMutex.Unlock()
